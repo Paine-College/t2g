@@ -74,7 +74,7 @@
             lowerThirdElement.style.opacity = "0"; // Fade out
 
             setTimeout(() => {
-                lowerThirdElement.innerText = `<div><strong>${Name}</strong> donated <strong>$${Amount}</strong></div>
+                lowerThirdElement.innerHTML = `<div><strong>${Name}</strong> donated <strong>$${Amount}</strong></div>
                 `;
                 lowerThirdElement.style.opacity = "1"; // Fade in
             }, 1000);
