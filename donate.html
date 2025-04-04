@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rotating Lower Third</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: transparent;
+            color: white;
+            text-align: center;
+        }
+        .lower-third {
+            position: fixed;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 24px;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+@keyframes slideIn {
+    from { transform: translateX(-100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.lower-third {
+    animation: slideIn 0.5s ease-in-out;
+}
+
+    </style>
+</head>
+<body>
+    <div class="lower-third" id="lowerThird">Loading...</div>
+
+    <script>
+        const sheetID = "1t4AdvG7cPtMdNVli3c2aPJ1tlDF-AVe_YKgRLVQosic"; // Replace with your actual Google Sheet ID
+        const apiUrl = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json`;
+
+        let entries = []; // Store entries here
+        let currentIndex = 0;
+
+        async function fetchLowerThird() {
+            try {
+                const response = await fetch(apiUrl);
+                const text = await response.text();
+                const json = JSON.parse(text.substring(47, text.length - 2)); // Clean JSON response
+                entries = json.table.rows.map(row => row.c.map(cell => cell ? cell.v : ""));
+
+                if (entries.length > 0) {
+                    showNextEntry(); // Start looping through entries
+                    setInterval(showNextEntry, 5000); // Change every 5 seconds
+                } else {
+                    document.getElementById("lowerThird").innerText = "No data available";
+                }
+            } catch (error) {
+                document.getElementById("lowerThird").innerText = "Error fetching data";
+            }
+        }
+
+        function showNextEntry() {
+            if (entries.length === 0) return;
+
+            // Select a random entry
+            const randomIndex = Math.floor(Math.random() * entries.length);
+            const [name, title] = entries[randomIndex];
+
+            const lowerThirdElement = document.getElementById("lowerThird");
+            lowerThirdElement.style.opacity = "0"; // Fade out
+
+            setTimeout(() => {
+                lowerThirdElement.innerText = `${Name} - ${Amount}`;
+                lowerThirdElement.style.opacity = "1"; // Fade in
+            }, 1000);
+        }
+
+        fetchLowerThird(); // Load data when page starts
+    </script>
+</body>
+</html>
